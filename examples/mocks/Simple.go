@@ -30,7 +30,7 @@ func (_m *Simple) GetAbc() (int, error) {
 	return r0, r1
 }
 
-// SetAbc provides a.0 mock function with given fields: _a0, _a1
+// SetAbc provides a mock function with given fields: _a0, _a1
 func (_m *Simple) SetAbc(_a0 string, _a1 int) {
 	_m.Called(_a0, _a1)
 }
