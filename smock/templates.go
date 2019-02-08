@@ -11,8 +11,13 @@ type FuncName = string
 type SimpleTypeName = string
 
 type Function struct {
-	Args       map[VarName]SimpleTypeName
-	ReturnArgs map[VarName]SimpleTypeName
+	Args       []Arg
+	ReturnArgs []Arg
+}
+
+type Arg struct {
+	Name VarName
+	Type SimpleTypeName
 }
 
 type FuncSet struct {
@@ -21,29 +26,32 @@ type FuncSet struct {
 }
 
 func NewFunction(f *types.Signature) Function {
-	args := make(map[VarName]SimpleTypeName, f.Params().Len())
+	orderedArgs := make([]Arg, 0, f.Params().Len())
 	for i := 0; i < f.Params().Len(); i++ {
 		v := f.Params().At(i)
 		varName := v.Name()
 		if len(varName) == 0 {
-			varName = fmt.Sprintf("%vvalue", v.Type().String())
+			varName = fmt.Sprintf("%vvalue", afterLastDot(v.Type().String()))
 		}
 
-		args[varName] = v.Type().String()
+		orderedArgs = append(orderedArgs, Arg{Name: varName, Type: afterLastSlash(v.Type().String())})
 	}
 
-	returnArgs := make(map[VarName]SimpleTypeName, f.Results().Len())
+	orderedReturnArgs := make([]Arg, 0, f.Results().Len())
 	for i := 0; i < f.Results().Len(); i++ {
 		v := f.Results().At(i)
 		varName := v.Name()
 		if len(varName) == 0 {
-			varName = fmt.Sprintf("%vvalue", v.Type().String())
+			varName = fmt.Sprintf("%vvalue", afterLastDot(v.Type().String()))
 		}
 
-		returnArgs[varName] = v.Type().String()
+		orderedReturnArgs = append(orderedReturnArgs, Arg{Name: varName, Type: afterLastSlash(v.Type().String())})
 	}
 
-	return Function{Args: args, ReturnArgs: returnArgs}
+	return Function{
+		Args:       orderedArgs,
+		ReturnArgs: orderedReturnArgs,
+	}
 }
 
 func NewFuncSet(st *types.Named) FuncSet {
@@ -64,15 +72,18 @@ func NewFuncSet(st *types.Named) FuncSet {
 
 var onFuncTemplate = template.Must(template.New("OnFuncs").Parse(`
 package mocks
+
+import "github.com/stretchr/testify/mock"
+
 {{define "argsDef"}}
-	{{- range $varName, $varType := .}}
-		{{$varName}} {{$varType}},
+	{{- range $var := .}}
+		{{$var.Name}} {{$var.Type}},
 	{{- end}}
 {{end}}
 
 {{define "args"}}
-	{{- range $varName, $varType := .}}
-		{{$varName}},
+	{{- range $var := .}}
+		{{$var.Name}},
 	{{- end}}
 {{end}}
 
@@ -102,6 +113,8 @@ package mocks
 type MyType interface {
 	C(int)
 }
+
+////go:generate go run ..\cmd\smock\main.go DifferentCases
 
 type DifferentCases interface {
 	Returns(x string, i int) (string, error)

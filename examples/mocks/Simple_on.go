@@ -1,6 +1,9 @@
 
 package mocks
 
+import "github.com/stretchr/testify/mock"
+
+
 
 
 
@@ -10,12 +13,12 @@ package mocks
 	}
 
 	func (c *GetAbcCall) Return(
-		errorvalue error,
 		intvalue int,
+		errorvalue error,
 ) *GetAbcCall {
 		return &GetAbcCall{Call: c.Call.Return(
-		errorvalue,
 		intvalue,
+		errorvalue,
 )}
 	}
 	
@@ -46,12 +49,12 @@ package mocks
 	}
 	
 	func (_m *Simple) OnSetAbc(
-		intvalue int,
 		stringvalue string,
+		intvalue int,
 ) *SetAbcCall {
 		c := _m.On("SetAbc", 
-		intvalue,
 		stringvalue,
+		intvalue,
 )
 		return &SetAbcCall{Call: c}
 	}

@@ -8,7 +8,7 @@ import (
 
 func TestSample_GetAbc(t *testing.T) {
 	s := mocks.Simple{}
-	s.OnGetAbc().Return(nil, 5)
+	s.OnGetAbc().Return(5, nil)
 
 	i, err := s.GetAbc()
 	assert.Equal(t, 5, i)

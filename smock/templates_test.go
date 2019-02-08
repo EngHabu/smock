@@ -9,6 +9,10 @@ import (
 
 func TestOnFuncGeneration(t *testing.T) {
 	expected := `
+package mocks
+
+import "github.com/stretchr/testify/mock"
+
 
 
 
@@ -45,10 +49,10 @@ func TestOnFuncGeneration(t *testing.T) {
 		TypeName: iface.(*types.Named).Obj().Name(),
 		Functions: map[FuncName]Function{
 			"C": {
-				Args: map[VarName]SimpleTypeName{
-					"i": iface.Underlying().(*types.Interface).Method(0).Type().(*types.Signature).Params().At(0).Type().String(),
+				Args: []Arg{
+					{Name: "i", Type: iface.Underlying().(*types.Interface).Method(0).Type().(*types.Signature).Params().At(0).Type().String()},
 				},
-				ReturnArgs: map[VarName]SimpleTypeName{},
+				ReturnArgs: []Arg{},
 			},
 		},
 	}))
@@ -61,10 +65,10 @@ func TestNewFuncSet(t *testing.T) {
 		TypeName: "MyType",
 		Functions: map[FuncName]Function{
 			"C": {
-				Args: map[VarName]SimpleTypeName{
-					"intvalue": "int",
+				Args: []Arg{
+					{Name: "intvalue", Type: "int"},
 				},
-				ReturnArgs: map[VarName]SimpleTypeName{},
+				ReturnArgs: []Arg{},
 			},
 		},
 	}
@@ -83,6 +87,10 @@ func TestEndToEnd(t *testing.T) {
 	assert.NotNil(t, fs)
 
 	expected := `
+package mocks
+
+import "github.com/stretchr/testify/mock"
+
 
 
 
@@ -104,7 +112,7 @@ func TestEndToEnd(t *testing.T) {
 	}
 	
 	func (_m *DifferentCases) OnComplexArgs(
-		t smock/smock.MyType,
+		t smock.MyType,
 ) *ComplexArgsCall {
 		c := _m.On("ComplexArgs", 
 		t,
@@ -162,12 +170,12 @@ func TestEndToEnd(t *testing.T) {
 	}
 
 	func (c *ReturnsCall) Return(
-		errorvalue error,
 		stringvalue string,
+		errorvalue error,
 ) *ReturnsCall {
 		return &ReturnsCall{Call: c.Call.Return(
-		errorvalue,
 		stringvalue,
+		errorvalue,
 )}
 	}
 	
@@ -177,12 +185,12 @@ func TestEndToEnd(t *testing.T) {
 	}
 	
 	func (_m *DifferentCases) OnReturns(
-		i int,
 		x string,
+		i int,
 ) *ReturnsCall {
 		c := _m.On("Returns", 
-		i,
 		x,
+		i,
 )
 		return &ReturnsCall{Call: c}
 	}

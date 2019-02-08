@@ -23,3 +23,20 @@ func stripGopath(p string) string {
 func gopaths() []string {
 	return strings.Split(os.Getenv("GOPATH"), string(filepath.ListSeparator))
 }
+
+func afterLastRune(str string, rune2 rune) string {
+	idx := strings.LastIndex(str, string(rune2))
+	if idx < 0 {
+		return str
+	}
+
+	return str[idx+1:]
+}
+
+func afterLastSlash(str string) string {
+	return afterLastRune(str, '/')
+}
+
+func afterLastDot(str string) string {
+	return afterLastRune(str, '.')
+}

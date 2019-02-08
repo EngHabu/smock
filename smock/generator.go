@@ -59,6 +59,10 @@ func (g *Generator) WriteMockOnMethodsToFile(fileName string) error {
 		return err
 	}
 
+	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+		return err
+	}
+
 	return ioutil.WriteFile(fileName, buf.Bytes(), os.ModePerm)
 }
 
