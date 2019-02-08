@@ -1,3 +1,3 @@
 ## Changelog
 
-fe24093 update config
+c0a49d6 change main package path
