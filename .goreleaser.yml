@@ -8,6 +8,9 @@ builds:
   - env:
       - CGO_ENABLED=0
     main: ./cmd/smock/main.go
+    goos:
+      - linux
+      - windows
 archive:
   replacements:
     darwin: Darwin
