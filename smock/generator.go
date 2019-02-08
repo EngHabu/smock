@@ -18,16 +18,17 @@ func loadType(pkg, typeName string) (types.Type, error) {
 	var err error
 	// Resolve package path
 	if pkg == "" || pkg[0] == '.' {
-		cleanPath := filepath.Clean(pkg)
-		pkg, err = filepath.Abs(cleanPath)
-		if err != nil {
-			return nil, err
-		}
-
-		pkg = stripGopath(pkg)
-
+		// If in go module mode, we shouldn't expand the path
 		if gomodule := os.Getenv("GO111MODULE"); gomodule == "on" {
 			pkg = "."
+		} else {
+			cleanPath := filepath.Clean(pkg)
+			pkg, err = filepath.Abs(cleanPath)
+			if err != nil {
+				return nil, err
+			}
+
+			pkg = stripGopath(pkg)
 		}
 	}
 
