@@ -25,9 +25,13 @@ func loadType(pkg, typeName string) (types.Type, error) {
 		}
 
 		pkg = stripGopath(pkg)
+
+		if gomodule := os.Getenv("GO111MODULE"); gomodule == "on" {
+			pkg = "."
+		}
 	}
 
-	fmt.Printf("Importing package [%v] for type [%v]", pkg, typeName)
+	fmt.Printf("Importing package [%v] for type [%v]\n", pkg, typeName)
 
 	targetPackage, err := importer.For("source", nil).Import(pkg)
 	if err != nil {
