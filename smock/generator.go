@@ -27,6 +27,8 @@ func loadType(pkg, typeName string) (types.Type, error) {
 		pkg = stripGopath(pkg)
 	}
 
+	fmt.Printf("Importing package [%v] for type [%v]", pkg, typeName)
+
 	targetPackage, err := importer.For("source", nil).Import(pkg)
 	if err != nil {
 		return nil, err
