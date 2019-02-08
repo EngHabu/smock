@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"smock/cmd/smock/commands"
 	"time"
 )
@@ -17,6 +18,6 @@ func main() {
 		parsed = time.Unix(0, 0)
 	}
 
-	fmt.Printf("smock version: %v. built at %v", version, parsed.Format(time.RFC822Z))
+	color.Green(fmt.Sprintf("SMock version: %v. built at %v", version, parsed.Format(time.RFC822Z)))
 	commands.ExecuteRootCommand()
 }
