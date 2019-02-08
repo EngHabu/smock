@@ -18,14 +18,21 @@ func loadType(pkg, typeName string) (types.Type, error) {
 	var err error
 	// Resolve package path
 	if pkg == "" || pkg[0] == '.' {
-		cleanPath := filepath.Clean(pkg)
-		pkg, err = filepath.Abs(cleanPath)
-		if err != nil {
-			return nil, err
-		}
+		// If in go module mode, we shouldn't expand the path
+		if gomodule := os.Getenv("GO111MODULE"); gomodule == "on" {
+			pkg = "."
+		} else {
+			cleanPath := filepath.Clean(pkg)
+			pkg, err = filepath.Abs(cleanPath)
+			if err != nil {
+				return nil, err
+			}
 
-		//pkg = gogenutil.StripGopath(pkg)
+			pkg = stripGopath(pkg)
+		}
 	}
+
+	fmt.Printf("Importing package [%v] for type [%v]\n", pkg, typeName)
 
 	targetPackage, err := importer.For("source", nil).Import(pkg)
 	if err != nil {
@@ -56,6 +63,10 @@ func (g *Generator) GenerateMockOnMethods(buf *bytes.Buffer) error {
 func (g *Generator) WriteMockOnMethodsToFile(fileName string) error {
 	var buf bytes.Buffer
 	if err := g.GenerateMockOnMethods(&buf); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
 		return err
 	}
 
