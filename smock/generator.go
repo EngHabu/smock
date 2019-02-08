@@ -24,7 +24,7 @@ func loadType(pkg, typeName string) (types.Type, error) {
 			return nil, err
 		}
 
-		//pkg = gogenutil.StripGopath(pkg)
+		pkg = stripGopath(pkg)
 	}
 
 	targetPackage, err := importer.For("source", nil).Import(pkg)
