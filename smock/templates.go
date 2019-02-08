@@ -63,6 +63,7 @@ func NewFuncSet(st *types.Named) FuncSet {
 }
 
 var onFuncTemplate = template.Must(template.New("OnFuncs").Parse(`
+package mocks
 {{define "argsDef"}}
 	{{- range $varName, $varType := .}}
 		{{$varName}} {{$varType}},
