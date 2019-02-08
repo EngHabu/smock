@@ -3,15 +3,20 @@ package main
 import (
 	"fmt"
 	"smock/cmd/smock/commands"
+	"time"
 )
 
 var (
 	version = "dev"
-	commit  = "none"
 	date    = "unknown"
 )
 
 func main() {
-	fmt.Printf("%v, commit %v, built at %v", version, commit, date)
+	parsed, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		panic(err)
+	}
+	
+	fmt.Printf("smock version: %v. built at %v", version, parsed.Format(time.RFC822Z))
 	commands.ExecuteRootCommand()
 }
